@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Translator</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: linear-gradient(#402E7A 30.12%, #4C3BCF 81.23%);
+        }
+        #video-frame {
+            width: 80%;
+            max-width: 640px;
+            border: 2px solid whitesmoke;
+            margin-bottom: 20px;
+        }
+        #prediction {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        #speech-to-text {
+            width: 500px;
+            height: 150px;
+            border: 1px solid red;
+            position: relative;
+        }
+        .mic-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .mic-button img {
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+    <script>
+        let final_transcript = '';
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        let recognizing = false
+
+        recognition.onstart = function() {
+            recognizing = true;
+            document.getElementById("mic-img").src = "https://github.com/googlearchive/webplatform-samples/blob/master/webspeechdemo/mic-animate.gif?raw=true"
+        };
+
+        recognition.onresult = function(event) {
+            const text = Array.from(event.results)
+                .map(result => result[0])
+                .map(result => result.transcript)
+                .join('')
+
+            console.log(text)
+            document.getElementById("result").innerText = text
+        };
+
+        function startButton() {
+            if (recognizing) {
+                recognition.stop()
+                document.getElementById("mic-img").src = 'https://github.com/googlearchive/webplatform-samples/blob/master/webspeechdemo/mic.gif?raw=true'
+                return
+            }
+            console.log('clicked');
+            final_transcript = '';
+            recognition.lang = "id-ID";
+            recognition.start();
+            document.getElementById("mic-img").src = "https://github.com/googlearchive/webplatform-samples/blob/master/webspeechdemo/mic-slash.gif?raw=true"
+            recognizing = true
+        }
+
+        let two_line = /\n\n/g;
+        let one_line = /\n/g;
+        function linebreak(s) {
+            return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
+        } 
+
+        let first_char = /\S/;
+        function capitalize(s) {
+            return s.replace(first_char, function(m) { return m.toUpperCase(); });
+        }
+    </script>
+</head>
+<body>
+    <div id="prediction">Prediction will appear here</div>
+
+    <div id="speech-to-text">
+        <button class="mic-button" onclick="startButton()">
+            <img id="mic-img" src="https://github.com/googlearchive/webplatform-samples/blob/master/webspeechdemo/mic.gif?raw=true" alt="Microphone">
+        </button>
+        <p id="result"></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script>
+        const socket = io()
+
+        socket.emit('join_room', {'room': 'cam-data'})
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            socket.send('Hello, server! this is web');
+        })
+
+        socket.on('response', function(res) {
+            console.log('Message from server:', res);
+        });
+
+        let tempWord = "";
+        socket.on("receive-word", data => {
+            if (data.word !== tempWord) {
+                if ('speechSynthesis' in window) {
+                    let msg = new SpeechSynthesisUtterance(data.word)
+                    window.speechSynthesis.speak(msg);
+                }
+                document.getElementById('prediction').innerText = data.word
+            }
+            tempWord = data.word
+        })
+    </script>
+</body>
+</html>

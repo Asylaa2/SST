@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <!--  Import Monserrat Font  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        main {
+            width: 100vw;
+            height: 100vh;
+            background: #5b41da;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Roboto";
+        }
+        .card {
+            width: 400px;
+            height: 230px;
+            background: #2b2067;
+            border-radius: 64px;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .welcome {
+            color: white;
+            text-align: center;
+            font-size: 36px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        .title {
+            color: white;
+            text-align: center;
+            font-weight: 400;
+        }
+        a {
+            position: absolute;
+            bottom: 5%;
+        }
+        button {
+            font-size: 28px;
+            padding: 10px 28px;
+            border-radius: 24px;
+            background: #2b2067;
+            border: none;
+            color: white;
+        }
+        button:hover {
+            background: #453196;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="card">
+        <h1 class="welcome">Welcome to our Website!</h1>
+        <h1 class="title">SmartSign Translator</h1>
+    </div>
+    <a href="/home">
+        <button>Start</button>
+    </a>
+</main>
+</body>
+</html>
